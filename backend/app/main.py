@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
+from typing import Literal
 
-from fastapi import BackgroundTasks, FastAPI, File, Form, Request, UploadFile
+from fastapi import BackgroundTasks, FastAPI, File, Form, Query, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from app.config import settings
@@ -8,6 +9,7 @@ from app.database import init_db
 from app.logger import get_logger
 from app.schemas import JobResponse, SubtitleStyle, TranscriptPayload, TranscriptResponse
 from app.services import job_service
+from app.services.subtitle_service import exportar_subtitulos
 
 
 @asynccontextmanager
@@ -83,6 +85,16 @@ async def render_job(job_id: str, style: SubtitleStyle, background_tasks: Backgr
     job = job_service.start_render(job_id)
     background_tasks.add_task(job_service.render_job, job_id, style)
     return job
+
+
+@app.get("/jobs/{job_id}/subtitles")
+async def descargar_subtitulos(job_id: str, formato: Literal["srt", "vtt"] = Query("srt", alias="format")):
+    segmentos = job_service.get_transcript(job_id)["segmentos"]
+    return Response(
+        content=exportar_subtitulos(segmentos, formato),
+        media_type="text/vtt" if formato == "vtt" else "application/x-subrip",
+        headers={"Content-Disposition": f'attachment; filename="subtitulos.{formato}"'},
+    )
 
 
 @app.get("/jobs/{job_id}/download")

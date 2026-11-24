@@ -79,6 +79,17 @@ class TestFlujoCompleto:
         assert put.status_code == 200
         assert put.json()["segmentos"][0]["texto"] == "Hola mundo corregido"
 
+        # Las dos descargas usan la transcripción editada.
+        for formato, separador in [("srt", ","), ("vtt", ".")]:
+            respuesta = client.get(f"/jobs/{job_id}/subtitles", params={"format": formato})
+            assert respuesta.status_code == 200
+            assert respuesta.headers["content-disposition"] == f'attachment; filename="subtitulos.{formato}"'
+            cabecera = "1\n" if formato == "srt" else "WEBVTT\n\n"
+            assert respuesta.text.startswith(
+                f"{cabecera}00:00:00{separador}000 --> 00:00:02{separador}000\nHola mundo corregido\n"
+            )
+        assert client.get(f"/jobs/{job_id}/subtitles?format=pdf").status_code == 422
+
         # 5. Renderizar con estilo → quemado en background
         render = client.post(
             f"/jobs/{job_id}/render",

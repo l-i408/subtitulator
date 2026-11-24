@@ -1,4 +1,6 @@
 import os
+from html import escape
+from typing import Literal
 
 from app.schemas import SubtitleStyle
 
@@ -65,3 +67,23 @@ def generar_ass(segmentos: list[dict], style: SubtitleStyle, output_path: str) -
         file.write("\n".join(lines) + "\n")
 
     return output_path
+
+
+def _marca_de_tiempo(segundos: float, separador: str) -> str:
+    horas, resto = divmod(round(segundos * 1000), 3_600_000)
+    minutos, resto = divmod(resto, 60_000)
+    segundos, ms = divmod(resto, 1000)
+    return f"{horas:02d}:{minutos:02d}:{segundos:02d}{separador}{ms:03d}"
+
+
+def exportar_subtitulos(segmentos: list[dict], formato: Literal["srt", "vtt"]) -> str:
+    separador = "," if formato == "srt" else "."
+    bloques = []
+    for numero, segmento in enumerate(segmentos, 1):
+        inicio = _marca_de_tiempo(segmento["inicio"], separador)
+        fin = _marca_de_tiempo(segmento["fin"], separador)
+        texto = "\n".join(linea for linea in segmento["texto"].splitlines() if linea.strip())
+        bloque = f"{inicio} --> {fin}\n{escape(texto, quote=False)}"
+        bloques.append(f"{numero}\n{bloque}" if formato == "srt" else bloque)
+    cabecera = "WEBVTT\n\n" if formato == "vtt" else ""
+    return cabecera + "\n\n".join(bloques) + ("\n" if bloques else "")

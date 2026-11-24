@@ -64,6 +64,10 @@ export const api = {
     return handle<Job>(res);
   },
 
+  subtitlesUrl(id: string, format: "srt" | "vtt"): string {
+    return `${BASE_URL}/jobs/${id}/subtitles?format=${format}`;
+  },
+
   downloadUrl(id: string): string {
     return `${BASE_URL}/jobs/${id}/download`;
   },

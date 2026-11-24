@@ -56,3 +56,8 @@ describe("downloadUrl", () => {
     expect(api.downloadUrl("xyz")).toBe(`${api.baseUrl}/jobs/xyz/download`);
   });
 });
+
+it("enlaza la descarga de subtítulos en ambos formatos", () => {
+  expect(api.subtitlesUrl("abc", "srt")).toContain("/jobs/abc/subtitles?format=srt");
+  expect(api.subtitlesUrl("abc", "vtt")).toContain("/jobs/abc/subtitles?format=vtt");
+});

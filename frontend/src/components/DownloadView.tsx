@@ -37,6 +37,15 @@ export function DownloadView({ job, onReset }: Props) {
         Descargar vídeo
       </a>
 
+      <div className="mt-3 flex justify-center gap-4">
+        {(["srt", "vtt"] as const).map((formato) => (
+          <a key={formato} href={api.subtitlesUrl(job.id, formato)} download
+             className="text-sm font-semibold text-signal underline">
+            Subtítulos {formato.toUpperCase()}
+          </a>
+        ))}
+      </div>
+
       <button
         type="button"
         onClick={onReset}

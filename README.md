@@ -117,7 +117,7 @@ npm run dev
 2. Espera a la **transcripción** (barra de progreso en vivo).
 3. **Revisa y edita** el texto y los tiempos en el editor.
 4. Ajusta el **estilo** de los subtítulos con vista previa.
-5. **Quema** los subtítulos y **descarga** el vídeo final.
+5. **Quema** los subtítulos y **descarga** el vídeo final. Si quieres usar la transcripción editada en otro reproductor, elige **Subtítulos SRT** o **Subtítulos VTT** en esa misma pantalla.
 
 ---
 
@@ -162,7 +162,7 @@ Cobertura actual: **57 tests backend** + **12 tests frontend** (ver [`docs/tests
 - [ ] Personalización avanzada de subtítulos (sombra, fondo, karaoke por palabra).
 - [ ] Aceleración por **GPU/CUDA** para modelos grandes.
 - [ ] Traducción opcional (subtítulos en idioma distinto al audio).
-- [ ] Exportar también `.srt` / `.vtt` aparte del vídeo quemado.
+- [x] Exportar también `.srt` / `.vtt` aparte del vídeo quemado.
 
 ---
 
